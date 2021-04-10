@@ -1,11 +1,17 @@
 import requests
 
+from bs4 import BeautifulSoup
 
-def scrape_quote(url):
-    r = requests.get(url)
-    print(r.json().get("content")) if "content" in r.json() and r.status_code == 200 \
-        else print("Invalid quote resource!")
+url = input("Input the URL:\n")
 
+r = requests.get(url, headers={'Accept-Language': 'en-US,en;q=0.5'})
+soup = BeautifulSoup(r.content, "html.parser")
 
-user_url = input("Input the URL:\n")
-scrape_quote(user_url)
+title = soup.find('h1')
+description = soup.find('div', {'class': ['summary_text']})
+
+if None in (title, description):
+    print('Invalid movie page!')
+else:
+    content = {'title': title.next.strip(), 'description': description.text.strip()}
+    print(content)
