@@ -1,17 +1,13 @@
 import requests
 
-from bs4 import BeautifulSoup
-
+file = open("source.html", "wb")
 url = input("Input the URL:\n")
-
-r = requests.get(url, headers={'Accept-Language': 'en-US,en;q=0.5'})
-soup = BeautifulSoup(r.content, "html.parser")
-
-title = soup.find('h1')
-description = soup.find('div', {'class': ['summary_text']})
-
-if None in (title, description):
-    print('Invalid movie page!')
+r = requests.get(url)
+status_code = r.status_code
+if status_code == 200:
+    file.write(r.content)
+    print("Content saved.")
 else:
-    content = {'title': title.next.strip(), 'description': description.text.strip()}
-    print(content)
+    print(f"The URL returned {status_code}!")
+
+file.close()
